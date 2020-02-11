@@ -1,6 +1,6 @@
 # Sheet
 
-```rs
+```rust
 struct Sheet {
   id: i32,
   name: String
@@ -11,7 +11,7 @@ The `Sheet` type represents a calculus sheet. The sheet has a name and an unique
 
 ___
 
-```rs
+```rust
 struct Expense {
   id: i32,
   name: String,
@@ -29,7 +29,7 @@ A `Sheet` is then composed of sources of incomes (`Income`) and expenses (`Expen
 
 ___
 
-```rs
+```rust
 struct InheritedSheet {
   sheet_id: i32,
   inherit_incomes: bool,
@@ -43,7 +43,7 @@ ___
 
 calculating a sheet's budget can be a long process, running through multiple sheets recursively. For this reason we must be careful when inheriting from sheets, checking for infinite loops.
 
-```rs
+```rust
 struct CachedSheetBudget {
   id: i32,
   sheet_id: i32,
@@ -51,7 +51,7 @@ struct CachedSheetBudget {
 }
 ```
 
-We can also use a caching table to avoid recalculating a sheet's budget everytime we need its value. The cached value should be updated everytime one of the sheet' values changes, is added or is removed. This mean updating a simple row in the `Expense` table can create changes in multiple sheets, as the changes propagate from the bottom sheet to the top sheets who inherits from the first ones.
+We can also use a caching table to avoid recalculating a sheet's budget everytime we need its value. The cached value should be updated everytime one of the sheet' values changes, is added or is removed. This means updating a simple row in the `Expense` table can create changes in multiple sheets, as the changes propagate from the bottom sheet to the top sheets who inherits from the first ones.
 
 Doing this creates faster read-access but slower write-access.
 
@@ -63,7 +63,7 @@ struct PendingSheetUpdate {
 }
 ```
 
-to avoid stack overflow when updating long sheet inheritance trees, the updating logic must not use recursive code. To achieve this, we use a queue where a pending update is pushed everytime we encounter one. We run through each sheet in the queue, updating its value, then adding into the queue every other sheet inheriting from the current sheet until there is no sheet in the queue anymore.
+to avoid a stack overflow when updating long sheet inheritance trees, the updating logic must not use recursive code. To achieve this, we use a queue where a pending update is pushed everytime we encounter one. We run through each sheet in the queue, updating its value, then adding into the queue every other sheet inheriting from the current sheet until there is no sheet in the queue anymore.
 
 ___
 
