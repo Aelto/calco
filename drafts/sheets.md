@@ -57,7 +57,7 @@ Doing this creates faster read-access but slower write-access.
 
 ___
 
-```rs
+```rust
 struct PendingSheetUpdate {
   sheet_id: i32
 }
@@ -67,7 +67,7 @@ to avoid a stack overflow when updating long sheet inheritance trees, the updati
 
 ___
 
-```rs
+```rust
 const USE_CACHED_SHEET_VALUES: bool;
 ```
 
