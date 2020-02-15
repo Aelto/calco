@@ -9,9 +9,7 @@ use crate::models::sheet::Sheet;
 pub struct Category {
   pub id: i32,
   pub name: String,
-  pub sheet_id: i32,
-
-  pub sheet: Option<Sheet>
+  pub sheet_id: i32
 }
 
 impl Category {
@@ -19,8 +17,7 @@ impl Category {
     Category {
       id: 0,
       name: name.to_owned(),
-      sheet_id,
-      sheet: None
+      sheet_id
     }
   }
 
@@ -54,8 +51,7 @@ impl Category {
         Category {
           id: row.get(0)?,
           name: row.get(1)?,
-          sheet_id: row.get(2)?,
-          sheet: None
+          sheet_id: row.get(2)?
         }
       )
     })?;
@@ -76,8 +72,29 @@ impl Category {
         Category {
           id: row.get(0)?,
           name: row.get(1)?,
-          sheet_id: row.get(2)?,
-          sheet: None
+          sheet_id: row.get(2)?
+        }
+      )
+    })?;
+
+    categories.collect()
+  }
+
+  pub fn get_all_by_sheet_id(sheet_id: i32) -> Result<Vec<Category>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select id, name, sheet_id
+      from categories
+      where sheet_id = ?
+    ")?;
+
+    let categories = query.query_map(params![sheet_id], |row| {
+      Ok(
+        Category {
+          id: row.get(0)?,
+          name: row.get(1)?,
+          sheet_id
         }
       )
     })?;

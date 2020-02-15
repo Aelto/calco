@@ -1,4 +1,5 @@
 use crate::constants::DATABASE_PATH;
+use crate::models::inherited_sheet;
 use rusqlite::{params, Connection, Result};
 
 /// Represents a calculus sheet,
@@ -29,6 +30,22 @@ impl Sheet {
       )
     ", params![self.name])
     .map(|_n| ())
+  }
+
+  pub fn remove(&self) -> Result<()> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    conn.execute("
+      delete from sheets
+      where id = ?1
+      ",
+      params![self.id],
+    )?;
+
+    inherited_sheet::remove_all_from_inherited_sheet_id(self.id)?;
+    inherited_sheet::remove_all_from_parent_sheet_id(self.id)?;
+
+    Ok(())
   }
 
   pub fn get_by_name(key: &str) -> Result<Option<Sheet>> {

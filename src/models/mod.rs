@@ -6,6 +6,7 @@ pub mod expense;
 pub mod category;
 pub mod user;
 pub mod invitation;
+pub mod inherited_sheet;
 
 pub fn create_database() -> Result<()> {
   println!("creating database tables");
@@ -15,8 +16,9 @@ pub fn create_database() -> Result<()> {
 
 pub fn create_admin_invitation() -> Result<()> {
   use crate::constants;
-  use crate::models::invitation::Invitation;
-  use crate::user::{User, UserRole};
+  use crate::models::invitation::{Invitation, update_invitation_expiration};
+  use crate::models::user::{User, UserRole};
+  use clipboard::{ClipboardProvider, ClipboardContext};
 
   let invitation = Invitation::get_by_handle(constants::ADMIN_HANDLE)?
   .or_else(|| {
@@ -36,7 +38,7 @@ pub fn create_admin_invitation() -> Result<()> {
       use std::fs::File;
       use std::io::prelude::Write;
 
-      invitations::update_invitation_expiration(constants::ADMIN_HANDLE)?;
+      update_invitation_expiration(constants::ADMIN_HANDLE)?;
 
       println!(
         "an admin invitation was made for {}, use it to create an account or delete it later on", 

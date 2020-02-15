@@ -10,19 +10,18 @@ pub struct Income {
   pub id: i32,
   pub name: String,
   pub amount: i32,
-  pub sheet_id: i32,
-
-  pub sheet: Option<Sheet>
+  pub date: i64,
+  pub sheet_id: i32
 }
 
 impl Income {
-  pub fn new(name: &str, amount: i32, sheet_id: i32) -> Income {
+  pub fn new(name: &str, amount: i32, sheet_id: i32, date: i64) -> Income {
     Income {
       id: 0,
       name: name.to_owned(),
       amount,
-      sheet_id,
-      sheet: None
+      date,
+      sheet_id
     }
   }
 
@@ -33,22 +32,37 @@ impl Income {
       insert into incomes (
         name,
         amount,
+        date,
         sheet_id
       )
       values (
         ?1,
         ?2,
-        ?3
+        ?3,
+        ?4
       )
-    ", params![self.name, self.amount, self.sheet_id])
+    ", params![self.name, self.amount, self.date, self.sheet_id])
     .map(|_n| ())
+  }
+
+  pub fn remove(&self) -> Result<()> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    conn.execute("
+      delete from incomes
+      where id = ?1
+      ",
+      params![self.id],
+    )?;
+
+    Ok(())
   }
 
   pub fn get_by_name(key: &str) -> Result<Option<Income>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
     let mut query = conn.prepare("
-      select id, name, amount, sheet_id
+      select id, name, amount, date, sheet_id
       from incomes
       where name = ?1
     ")?;
@@ -59,8 +73,8 @@ impl Income {
           id: row.get(0)?,
           name: row.get(1)?,
           amount: row.get(2)?,
-          sheet_id: row.get(3)?,
-          sheet: None
+          date: row.get(3)?,
+          sheet_id: row.get(4)?
         }
       )
     })?;
@@ -72,7 +86,7 @@ impl Income {
     let conn = Connection::open(DATABASE_PATH)?;
 
     let mut query = conn.prepare("
-      select id, name, amount, sheet_id
+      select id, name, amount, date, sheet_id
       from incomes
     ")?;
 
@@ -82,8 +96,32 @@ impl Income {
           id: row.get(0)?,
           name: row.get(1)?,
           amount: row.get(2)?,
-          sheet_id: row.get(3)?,
-          sheet: None
+          date: row.get(3)?,
+          sheet_id: row.get(4)?
+        }
+      )
+    })?;
+
+    incomes.collect()
+  }
+
+  pub fn get_all_by_sheet_id(sheet_id: i32) -> Result<Vec<Income>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select id, name, amount, date, sheet_id
+      from incomes
+      where sheet_id = ?1
+    ")?;
+
+    let incomes = query.query_map(params![sheet_id], |row| {
+      Ok(
+        Income {
+          id: row.get(0)?,
+          name: row.get(1)?,
+          amount: row.get(2)?,
+          date: row.get(3)?,
+          sheet_id
         }
       )
     })?;
@@ -100,6 +138,7 @@ pub fn create_table() -> Result<()> {
       id integer primary key autoincrement,
       name text not null,
       amount integer not null,
+      date datetime not null,
       sheet_id integer not null
     )
   ", params![])

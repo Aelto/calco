@@ -226,6 +226,17 @@ pub fn set_user_token(handle: &str, token: &str) -> Result<i64> {
   Ok(expiration_date)
 }
 
+pub fn delete_user_by_id(id: i32) -> Result<()> {
+  let conn = Connection::open(constants::DATABASE_PATH)?;
+
+  conn.execute("
+    delete from users
+    where id = ?1
+  ", params![id])?;
+
+  Ok(())
+}
+
 fn new_expiration_date() -> i64 {
   SystemTime::now()
       .add(Duration::new(constants::USER_TOKEN_EXPIRE_DURATION_SECONDS, 0))
