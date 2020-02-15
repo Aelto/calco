@@ -29,18 +29,19 @@ async fn main() -> std::io::Result<()> {
   HttpServer::new(|| {
     App::new()
     .service(web::resource("/").route(web::get().to(pages::root::render)))
+    .route("/signup", web::get().to(pages::signup::render))
+    .route("/signin", web::get().to(pages::signin::render))
+    
+    .service(web::resource("/sheets").route(web::get().to(pages::sheets::render)))
+    .service(web::resource("/new-sheet").route(web::get().to(pages::new_sheet::render)))
     .service(fs::Files::new("/static", "./static"))
-    // .service(
-    //   web::scope("/api")
-    //   .route("/explorer/open/{config_key}", web::get().to(api::explorer::open))
-    //   .service(
-    //     web::resource("/test").to(|req: HttpRequest| match *req.method() {
-    //       http::Method::GET => HttpResponse::Ok(),
-    //       http::Method::POST => HttpResponse::MethodNotAllowed(),
-    //       _ => HttpResponse::NotFound(),
-    //   }),
-    //   )
-    // )
+    .service(
+      web::scope("/api")
+        .route("/auth/signup", web::post().to(api::auth::signup))
+        .route("/auth/signin", web::post().to(api::auth::signin))
+        .route("/users/delete-by-id", web::post().to(api::users::delete_user))
+        .route("/invitations", web::post().to(api::invitations::create_invitation))
+    )
   })
   .bind(format!("127.0.0.1:{}", port))?
   .run()

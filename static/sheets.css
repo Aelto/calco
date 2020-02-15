@@ -1,0 +1,24 @@
+
+.title-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.title-row h1 {
+  margin: 0;
+}
+
+.title-row h3 {
+  margin: 0;
+  opacity: .8;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  background: white;;
+}

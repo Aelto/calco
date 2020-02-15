@@ -1,5 +1,5 @@
 use actix_web::{HttpRequest, HttpMessage};
-use crate::models::users::{User, UserRole};
+use crate::models::user::{User, UserRole};
 
 pub enum AuthenticationResult {
   DoesHaveAccess,
