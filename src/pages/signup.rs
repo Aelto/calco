@@ -46,9 +46,13 @@ pub async fn render(info: Option<web::Query<Info>>, req: HttpRequest) -> HttpRes
     p {
       "You need an invitation to create an account, ask an administrator for one."
     }
+
+    p {
+      "You can " a href="/signin" { "signin" } " if you already have an account."
+    }
   };
 
-  let view = components::page("root", &content);
+  let view = components::page_without_menu("root", &content);
 
   HttpResponse::Ok()
   .content_type("text/html")

@@ -6,23 +6,31 @@ use actix_web::HttpResponse;
 
 pub async fn render(_req: HttpRequest) -> HttpResponse {
   let content = html! {
-    form method="post" action="/api/auth/signin" {
-      h4 { "Sign in" }
-      fieldset {
-        legend { "Sign in to an account" }
+    img class="background-illustration" src="/static/assets/undraw_authentication_fsn5.svg";
 
-        label for="handle" { "handle" }
-        input id="handle" type="handle" name="handle";
-
-        label for="password" { "password" }
-        input id="password" type="password" name="password";
-
-        input type="submit" value="Submit";
+    div class="form-wrapper" {
+      form method="post" action="/api/auth/signin" {
+        h4 { "Sign in" }
+        fieldset {
+          legend { "Sign in to an account" }
+  
+          label for="handle" { "handle" }
+          input id="handle" type="handle" name="handle";
+  
+          label for="password" { "password" }
+          input id="password" type="password" name="password";
+  
+          input type="submit" value="Submit";
+        }
+      }
+  
+      div {
+        "or " a href="/signup" { "sign up" } " if you don't have an account."
       }
     }
   };
 
-  let view = components::page("root", &content);
+  let view = components::page_without_menu("signin", &content);
 
   HttpResponse::Ok()
   .content_type("text/html")
