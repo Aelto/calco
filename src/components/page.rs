@@ -9,7 +9,7 @@ pub fn page(page_title: &str, page_content: &Markup) -> Markup {
       (header(page_title))
 
       body {
-        (menu())
+        (menu(page_title))
 
         div id="content" {
           (page_content)

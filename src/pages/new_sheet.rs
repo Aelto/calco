@@ -22,6 +22,8 @@ pub async fn render(_req: HttpRequest) -> HttpResponse {
           input id="name" type="text";
         }
 
+        a href="/sheets" { "cancel" }
+
         input type="submit" value="create";
       }
     }
