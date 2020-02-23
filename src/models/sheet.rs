@@ -5,12 +5,14 @@ use rusqlite::{params, Connection, Result};
 /// Represents a calculus sheet,
 /// it could be a month, a week or a day.
 /// Everything is tied to a sheet in the end.
+#[allow(dead_code)]
 pub struct Sheet {
   pub id: i32,
   pub name: String
 }
 
 impl Sheet {
+  #[allow(dead_code)]
   pub fn new(name: &str) -> Sheet {
     Sheet {
       id: 0,
@@ -18,6 +20,7 @@ impl Sheet {
     }
   }
 
+  #[allow(dead_code)]
   pub fn insert(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -32,6 +35,7 @@ impl Sheet {
     .map(|_n| ())
   }
 
+  #[allow(dead_code)]
   pub fn remove(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -48,6 +52,7 @@ impl Sheet {
     Ok(())
   }
 
+  #[allow(dead_code)]
   pub fn get_by_name(key: &str) -> Result<Option<Sheet>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -69,6 +74,7 @@ impl Sheet {
     configs.nth(0).transpose()
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<Sheet>> {
     let conn = Connection::open(DATABASE_PATH)?;
 

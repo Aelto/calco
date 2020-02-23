@@ -1,5 +1,5 @@
 use crate::components;
-use maud::{html, DOCTYPE};
+use maud::{html};
 use actix_web::web;
 use serde::Deserialize;
 use actix_web::web::HttpRequest;
@@ -12,47 +12,51 @@ pub struct Info {
   hash: String
 }
 
-pub async fn render(info: Option<web::Query<Info>>, req: HttpRequest) -> HttpResponse {
+pub async fn render(info: Option<web::Query<Info>>, _req: HttpRequest) -> HttpResponse {
   let content = html! {
-    form method="post" action="/api/auth/signup" {
-      h4 { "Signup" }
-      fieldset {
-        legend { "Create an account" }
+    img class="background-illustration" src="/static/assets/undraw_authentication_fsn5.svg";
 
-        @match info {
-          Some(params) => {
-            label for="invitation_hash" { "invitation token" }
-            input id="invitation_hash" type="password" name="invitation_hash" value=(params.hash) readonly="true";
-
-            label for="handle" { "handle" }
-            input id="handle" type="text" name="handle" value=(params.handle) readonly="true";
-          },
-          None => {
-            label for="handle" { "handle" }
-            input id="handle" type="text" name="handle";
+    div class="form-wrapper" {
+      form method="post" action="/api/auth/signup" {
+        h4 { "Signup" }
+        fieldset {
+          legend { "Create an account" }
+  
+          @match info {
+            Some(params) => {
+              label for="invitation_hash" { "invitation token" }
+              input id="invitation_hash" type="password" name="invitation_hash" value=(params.hash) readonly="true";
+  
+              label for="handle" { "handle" }
+              input id="handle" type="text" name="handle" value=(params.handle) readonly="true";
+            },
+            None => {
+              label for="handle" { "handle" }
+              input id="handle" type="text" name="handle";
+            }
           }
+  
+          label for="password" { "password" }
+          input id="password" type="password" name="password";
+  
+          label for="passwordconfirm" { "confirm password" }
+          input id="passwordconfirm" name="passwordconfirm" type="password";
+  
+          input type="submit" value="Submit";
         }
-
-        label for="password" { "password" }
-        input id="password" type="password" name="password";
-
-        label for="passwordconfirm" { "confirm password" }
-        input id="passwordconfirm" name="passwordconfirm" type="password";
-
-        input type="submit" value="Submit";
       }
-    }
 
-    p {
-      "You need an invitation to create an account, ask an administrator for one."
-    }
-
-    p {
-      "You can " a href="/signin" { "signin" } " if you already have an account."
+      p {
+        "You need an invitation to create an account, ask an administrator for one."
+      }
+  
+      p {
+        "You can " a href="/signin" { "signin" } " if you already have an account."
+      }
     }
   };
 
-  let view = components::page_without_menu("root", &content);
+  let view = components::page_without_menu("signup", &content);
 
   HttpResponse::Ok()
   .content_type("text/html")

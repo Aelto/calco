@@ -1,6 +1,6 @@
 #![feature(proc_macro_hygiene)]
 
-use actix_web::{web, App, HttpServer};
+use actix_web::{App, web, HttpServer};
 use actix_files as fs;
 
 mod pages;
@@ -23,8 +23,6 @@ async fn main() -> std::io::Result<()> {
     .unwrap_or(5000);
 
   println!("starting server on port {}", port);
-
-  use actix_web::{web, Error, HttpRequest, HttpResponse, Result, http,};
 
   HttpServer::new(|| {
     App::new()

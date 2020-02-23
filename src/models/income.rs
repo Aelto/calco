@@ -1,11 +1,10 @@
 use crate::constants::DATABASE_PATH;
 use rusqlite::{params, Connection, Result};
 
-use crate::models::sheet::Sheet;
-
 // Represents a source of income in a `Sheet`
 //
 //
+#[allow(dead_code)]
 pub struct Income {
   pub id: i32,
   pub name: String,
@@ -15,6 +14,7 @@ pub struct Income {
 }
 
 impl Income {
+  #[allow(dead_code)]
   pub fn new(name: &str, amount: i32, sheet_id: i32, date: i64) -> Income {
     Income {
       id: 0,
@@ -25,6 +25,7 @@ impl Income {
     }
   }
 
+  #[allow(dead_code)]
   pub fn insert(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -45,6 +46,7 @@ impl Income {
     .map(|_n| ())
   }
 
+  #[allow(dead_code)]
   pub fn remove(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -57,7 +59,8 @@ impl Income {
 
     Ok(())
   }
-
+  
+  #[allow(dead_code)]
   pub fn get_by_name(key: &str) -> Result<Option<Income>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -82,6 +85,7 @@ impl Income {
     incomes.nth(0).transpose()
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<Income>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -105,6 +109,7 @@ impl Income {
     incomes.collect()
   }
 
+  #[allow(dead_code)]
   pub fn get_all_by_sheet_id(sheet_id: i32) -> Result<Vec<Income>> {
     let conn = Connection::open(DATABASE_PATH)?;
 

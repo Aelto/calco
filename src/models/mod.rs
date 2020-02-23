@@ -12,12 +12,19 @@ pub fn create_database() -> Result<()> {
   println!("creating database tables");
 
   sheet::create_table()
+  .and(user::create_table())
+  .and(category::create_table())
+  .and(income::create_table())
+  .and(expense::create_table())
+  .and(invitation::create_table())
+  .and(inherited_sheet::create_table())
+  .and(create_admin_invitation())
 }
 
 pub fn create_admin_invitation() -> Result<()> {
   use crate::constants;
   use crate::models::invitation::{Invitation, update_invitation_expiration};
-  use crate::models::user::{User, UserRole};
+  use crate::models::user::{UserRole};
   use clipboard::{ClipboardProvider, ClipboardContext};
 
   let invitation = Invitation::get_by_handle(constants::ADMIN_HANDLE)?
@@ -35,7 +42,6 @@ pub fn create_admin_invitation() -> Result<()> {
 
   match invitation {
     Some(inv) => {
-      use std::fs::File;
       use std::io::prelude::Write;
 
       update_invitation_expiration(constants::ADMIN_HANDLE)?;

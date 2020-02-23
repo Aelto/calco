@@ -90,6 +90,7 @@ impl Invitation {
     invitations.nth(0).transpose()
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<Invitation>> {
     let conn = Connection::open(constants::DATABASE_PATH)?;
 

@@ -1,8 +1,6 @@
 use crate::constants::DATABASE_PATH;
 use rusqlite::{params, Connection, Result};
 
-use crate::models::sheet::Sheet;
-
 // Represents a source of expense in a `Sheet`
 //
 //
@@ -13,6 +11,7 @@ pub struct Category {
 }
 
 impl Category {
+  #[allow(dead_code)]
   pub fn new(name: &str, sheet_id: i32) -> Category {
     Category {
       id: 0,
@@ -21,6 +20,7 @@ impl Category {
     }
   }
 
+  #[allow(dead_code)]
   pub fn insert(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -37,6 +37,7 @@ impl Category {
     .map(|_n| ())
   }
 
+  #[allow(dead_code)]
   pub fn get_by_name(key: &str) -> Result<Option<Category>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -59,6 +60,7 @@ impl Category {
     categories.nth(0).transpose()
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<Category>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -80,6 +82,7 @@ impl Category {
     categories.collect()
   }
 
+  #[allow(dead_code)]
   pub fn get_all_by_sheet_id(sheet_id: i32) -> Result<Vec<Category>> {
     let conn = Connection::open(DATABASE_PATH)?;
 

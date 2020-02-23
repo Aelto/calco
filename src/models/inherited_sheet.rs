@@ -1,6 +1,7 @@
 use crate::constants::DATABASE_PATH;
 use rusqlite::{params, Connection, Result};
 
+#[allow(dead_code)]
 pub struct InheritedSheet {
   parent_sheet_id: i32,
   inherited_sheet_id: i32,
@@ -8,6 +9,7 @@ pub struct InheritedSheet {
 }
 
 impl InheritedSheet {
+  #[allow(dead_code)]
   pub fn new(parent_sheet_id: i32, inherited_sheet_id: i32, date: i64) -> InheritedSheet {
     InheritedSheet {
       parent_sheet_id,
@@ -16,6 +18,7 @@ impl InheritedSheet {
     }
   }
 
+  #[allow(dead_code)]
   pub fn insert(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -34,6 +37,7 @@ impl InheritedSheet {
     .map(|_n| ())
   }
 
+  #[allow(dead_code)]
   pub fn remove(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -47,6 +51,7 @@ impl InheritedSheet {
     Ok(())
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<InheritedSheet>> {
     let conn = Connection::open(DATABASE_PATH)?;
 

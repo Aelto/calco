@@ -4,6 +4,7 @@ use rusqlite::{params, Connection, Result};
 // Represents a source of expense in a `Sheet`
 //
 //
+#[allow(dead_code)]
 pub struct Expense {
   pub id: i32,
   pub name: String,
@@ -13,6 +14,7 @@ pub struct Expense {
 }
 
 impl Expense {
+  #[allow(dead_code)]
   pub fn new(name: &str, amount: i32, sheet_id: i32, date: i64) -> Expense {
     Expense {
       id: 0,
@@ -23,6 +25,7 @@ impl Expense {
     }
   }
 
+  #[allow(dead_code)]
   pub fn insert(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -43,6 +46,7 @@ impl Expense {
     .map(|_n| ())
   }
 
+  #[allow(dead_code)]
   pub fn remove(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -56,6 +60,7 @@ impl Expense {
     Ok(())
   }
 
+  #[allow(dead_code)]
   pub fn get_by_name(key: &str) -> Result<Option<Expense>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -80,6 +85,7 @@ impl Expense {
     expenses.nth(0).transpose()
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<Expense>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -103,6 +109,7 @@ impl Expense {
     expenses.collect()
   }
 
+  #[allow(dead_code)]
   pub fn get_all_by_sheet_id(sheet_id: i32) -> Result<Vec<Expense>> {
     let conn = Connection::open(DATABASE_PATH)?;
 

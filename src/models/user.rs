@@ -23,6 +23,7 @@ impl UserRole {
     }
   }
 
+  #[allow(dead_code)]
   pub fn to_number(&self) -> i32 {
     *self as i32
   }
@@ -84,6 +85,7 @@ impl User {
     (self.role as i32) >= (role as i32)
   }
 
+  #[allow(dead_code)]
   pub fn delete(&self) -> Result<()> {
     let conn = Connection::open(constants::DATABASE_PATH)?;
   
@@ -120,6 +122,7 @@ impl User {
     Ok(())
   }
 
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<User>> {
     let conn = Connection::open(constants::DATABASE_PATH)?;
 

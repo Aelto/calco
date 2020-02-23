@@ -59,54 +59,63 @@ pub fn create_sheet(req: HttpRequest, form: web::Form<CreateSheetBody>) -> Resul
   )
 }
 
-// pub fn open(req: HttpRequest) -> HttpResponse {
-//   let config_key = req.match_info()
-//     .get("config_key")
-//     .unwrap_or("");
+#[derive(Serialize, Deserialize)]
+pub struct DeleteSheetBody {
+  pub name: String,
+}
 
-//   match Config::get_by_key(&config_key) {
-//     Ok(Some(conf)) => {
-//       use std::path::Path;
+pub fn delete_sheet_by_name(req: HttpRequest, form: web::Form<CreateSheetBody>) -> Result<HttpResponse> {
+  let auth_result = request_authentication(&req, UserRole::Guest);
 
-//       let folder_path = Path::new(".").join(Path::new(&conf.value));
+  match auth_result {
+    Ok(auth) => {
+      if !auth.has_access() {
+        return Ok(
+          HttpResponse::NotFound()
+            .content_type("text/plain")
+            .body("HTTP 404: Not found"),
+        );
+      }
+    }
+    Err(e) => {
+      return Ok(
+        HttpResponse::InternalServerError()
+          .content_type("text/plain")
+          .body(e),
+      )
+    }
+  };
 
-//       if cfg!(target_os = "windows") {
-//         println!("opening: {}", folder_path.to_str().unwrap_or("."));
+  if form.name.len() == 0 {
+    return Ok(
+      HttpResponse::Unauthorized()
+        .content_type("text/plain")
+        .body("sheet name is required")
+    );
+  }
 
-//         if let Err(e) = Command::new("cmd")
-//           .args(&["/C", "explorer", folder_path.to_str().unwrap_or(".")])
-//           .output() {
-//           println!("{}", e);
+  let some_sheet = Sheet::get_by_name(&form.name).map_err(|err| {
+    println!("error when fetching sheet {}", err);
 
-//           return HttpResponse::InternalServerError()
-//           .content_type("text/plain")
-//           .body("Internal server error: an error occured when trying to open folder");
-//         }
-//       }
-//       else {
-//         return HttpResponse::InternalServerError()
-//         .content_type("text/plain")
-//         .body("Internal server error: Target OS not supported");
-//       }
-//     },
+    HttpResponse::InternalServerError()
+      .content_type("text/plain")
+      .body("Internal server error: error when searching sheet from database")
+  })?;
 
-//     Ok(None) => {
-//       return HttpResponse::NotFound()
-//       .content_type("text/plain")
-//       .body("404 Not Found: no such config");
-//     }
+  if let Some(sheet) = some_sheet {
+    sheet.remove().map_err(|err| {
+      println!("error when removing sheet {}", err);
 
-//     Err(e) => {
-//       println!("{}", e);
+      HttpResponse::InternalServerError()
+        .content_type("text/plain")
+        .body("Internal server error: error when removing sheet from database")
+    })?;
+  }
 
-//       return HttpResponse::InternalServerError()
-//       .content_type("text/plain")
-//       .body("Internal server error: error when fetching config");
-//     }
-//   }
-
-//   HttpResponse::Found()
-//       .header(http::header::LOCATION, "/")
-//       .content_type("text/plain")
-//       .body("created")
-// }
+  Ok(
+    HttpResponse::Found()
+      .header(http::header::LOCATION, "/sheets")
+      .content_type("text/plain")
+      .body("created")
+  )
+}
