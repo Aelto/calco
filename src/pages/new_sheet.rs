@@ -11,20 +11,25 @@ pub async fn render(_req: HttpRequest) -> HttpResponse {
     div class="title-row" {
       div class="left" {
         h1 { "Your sheets" }
-        span { "creating a new sheet" }
+        // span { "creating a new sheet" }
       }
     }
 
     div class="form-wrapper" {
-      form method="post" action="/api/sheet" {
-        div {
-          label for="name" { "Name" }
-          input id="name" type="text";
+      form method="post" action="/api/sheets" {
+        h4 { "Creating a new sheet" }
+        fieldset {
+          legend { "fill the information" }
+          div {
+            label for="name" { "Name" }
+            input id="name" type="text";
+          }
+  
+          div class="row" {
+            a href="/sheets" { "cancel" }
+            input type="submit" value="create";
+          }
         }
-
-        a href="/sheets" { "cancel" }
-
-        input type="submit" value="create";
       }
     }
   };

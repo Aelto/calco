@@ -38,6 +38,7 @@ async fn main() -> std::io::Result<()> {
         .route("/auth/signup", web::post().to(api::auth::signup))
         .route("/auth/signin", web::post().to(api::auth::signin))
         .route("/users/delete-by-id", web::post().to(api::users::delete_user))
+        .route("/sheets", web::post().to(api::sheet::create_sheet))
         .route("/invitations", web::post().to(api::invitations::create_invitation))
     )
   })

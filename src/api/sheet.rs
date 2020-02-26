@@ -10,7 +10,7 @@ pub struct CreateSheetBody {
   pub name: String,
 }
 
-pub fn create_sheet(req: HttpRequest, form: web::Form<CreateSheetBody>) -> Result<HttpResponse> {
+pub async fn create_sheet(req: HttpRequest, form: web::Form<CreateSheetBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
