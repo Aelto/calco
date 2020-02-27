@@ -22,7 +22,7 @@ pub async fn render(_req: HttpRequest) -> HttpResponse {
           legend { "fill the information" }
           div {
             label for="name" { "Name" }
-            input id="name" type="text";
+            input id="name" type="text" name="name";
           }
   
           div class="row" {

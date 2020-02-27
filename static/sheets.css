@@ -19,6 +19,55 @@
   flex-direction: column;
 }
 
-form {
-  background: white;;
+/* #region sheets list */
+section.sheets {
+  padding: 0 12em;
 }
+
+section.sheets .sheet {
+  padding: 1em;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px -2px rgba(20, 20, 20, .1);
+  background: linear-gradient(-45deg, rgb(251, 252, 255) 0%, rgba(255,255,255,1) 100%);
+  transition: .1s box-shadow ease-in-out;
+}
+
+section.sheets .sheet:hover {
+  box-shadow: 
+    0 4px 12px -2px rgba(20, 20, 20, .1),
+    12px 12px 3px -6px var(--var-main-color-low-opacity);
+}
+
+section.sheets .sheet .name {
+}
+
+section.sheets .sheet + .sheet {
+  margin-top: 1em;
+}
+
+section.sheets .sheet .bottom-row {
+  display: flex;
+  justify-content: flex-end;
+  font-weight: lighter;
+  font-size: 85%;
+}
+
+section.sheets .sheet .bottom-row .actions {
+  display: flex;
+  opacity: 0;
+  transition: .1s all ease-in;
+  transform: translate(15%, 0);
+}
+
+section.sheets .sheet:hover .bottom-row .actions {
+  visibility: visible;
+  opacity: 1;
+  transform: translate(0%, 0);
+}
+
+section.sheets .sheet .bottom-row .actions input {
+  margin-left: 1em;
+}
+
+/* #endregion sheets list */

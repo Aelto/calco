@@ -1,7 +1,19 @@
+:root {
+  --var-main-color: rgb(115, 161, 255) /* paletvioletred */;
+  --var-main-color-low-opacity: rgba(115, 161, 255, .1) /*#d870930c*/;
+  --var-main-color-reduced-opacity: rgba(115, 161, 255, .2)/*#d870933a*/;
+  --var-accent-color: rgb(254, 92, 135);
+
+  --var-main-color-text: rgb(50, 50, 70);
+}
+
 html, body {
   padding: 0;
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--var-main-color-text);
+  background: radial-gradient(circle, rgba(243,243,243,1) 0%, rgba(255,255,255,1) 100%);
+  
 }
 
 body {
@@ -43,21 +55,38 @@ body .menu {
 }
 
 .menu a.active {
-  color: #d87093;
+  color: var(--var-main-color);
   box-shadow: 0 7px 1px -6px currentColor;;
 }
 /* #endregion menu */
 
 
 /* #region global styles */
-button, input[type="submit"] {
-  background-color: #d87093 /*palevioletred*/;
+button, input[type="submit"]:not(.link) {
+  background-color: var(--var-main-color) /*palevioletred*/;
   border: none;
   border-radius: 6px;
   color: white;
   padding: .2em .5em;
   cursor: pointer;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+input.link {
+  background: none;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  /* text-decoration: underline; */
+  color: var(--var-main-color);
+  font-size: 1em;
+  line-height: normal;
+  padding: unset;
+}
+
+a {
+  color: var(--var-main-color-text);
+  text-decoration: none;
 }
 
 input {
