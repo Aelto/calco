@@ -32,6 +32,7 @@ async fn main() -> std::io::Result<()> {
     
     .service(web::resource("/sheets").route(web::get().to(pages::sheets::render)))
     .service(web::resource("/new-sheet").route(web::get().to(pages::new_sheet::render)))
+    .service(web::resource("/sheet/rename/{sheet_id}").route(web::get().to(pages::rename_sheet::render)))
     .service(fs::Files::new("/static", "./static"))
     .service(
       web::scope("/api")
@@ -39,6 +40,8 @@ async fn main() -> std::io::Result<()> {
         .route("/auth/signin", web::post().to(api::auth::signin))
         .route("/users/delete-by-id", web::post().to(api::users::delete_user))
         .route("/sheets", web::post().to(api::sheet::create_sheet))
+        .route("/sheets/delete-by-id", web::post().to(api::sheet::delete_sheet_by_id))
+        .route("/sheets/rename-by-id", web::post().to(api::sheet::rename_sheet_by_id))
         .route("/invitations", web::post().to(api::invitations::create_invitation))
     )
   })

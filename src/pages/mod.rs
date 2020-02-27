@@ -3,3 +3,4 @@ pub mod sheets;
 pub mod new_sheet;
 pub mod signup;
 pub mod signin;
+pub mod rename_sheet;

@@ -52,6 +52,20 @@ impl Sheet {
     Ok(())
   }
 
+  pub fn update(&self) -> Result<()> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    conn.execute("
+      update sheets
+      set name = ?1
+      where id = ?2
+      ",
+      params![self.name, self.id],
+    )?;
+
+    Ok(())
+  }
+
   #[allow(dead_code)]
   pub fn get_by_name(key: &str) -> Result<Option<Sheet>> {
     let conn = Connection::open(DATABASE_PATH)?;
@@ -63,6 +77,27 @@ impl Sheet {
     ")?;
 
     let mut configs = query.query_map(params![key], |row| {
+      Ok(
+        Sheet {
+          id: row.get(0)?,
+          name: row.get(1)?
+        }
+      )
+    })?;
+
+    configs.nth(0).transpose()
+  }
+
+  pub fn get_by_id(id: i32) -> Result<Option<Sheet>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select id, name
+      from sheets
+      where id = ?1
+    ")?;
+
+    let mut configs = query.query_map(params![id], |row| {
       Ok(
         Sheet {
           id: row.get(0)?,

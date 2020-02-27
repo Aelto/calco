@@ -31,10 +31,10 @@ pub async fn render(_req: HttpRequest) -> HttpResponse {
 
               div class="bottom-row" {
                 div class="actions" {
-                  a href="/sheet/rename" { "rename" }
+                  a href={"/sheet/rename/" (sheet.id)} { "rename" }
 
-                  form method="post" action="/api/sheets/delete" {
-                    input type="hidden" value=(sheet.id);
+                  form method="post" action="/api/sheets/delete-by-id" {
+                    input type="hidden" name="id" value=(sheet.id);
                     input type="submit" value="delete" class="link";
                   }
                 }
