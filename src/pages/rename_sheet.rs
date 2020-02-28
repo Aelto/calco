@@ -44,10 +44,13 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
         div class="form-wrapper" {
           form method="post" action="/api/sheets/rename-by-id" {
             h4 { "Renaming sheet" }
-            fieldset {
-              legend { "enter a new name" }
+            // fieldset {
+              // legend { "enter a new name" }
 
-              input type="hidden" name="id" value=(sheet_id);
+              
+            // }
+
+            input type="hidden" name="id" value=(sheet_id);
 
               div {
                 label for="name" { "Name" }
@@ -58,7 +61,6 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
                 a href="/sheets" { "cancel" }
                 input type="submit" value="rename";
               }
-            }
           }
         }
 

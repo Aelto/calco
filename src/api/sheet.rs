@@ -65,7 +65,7 @@ pub struct RenameSheetByIdBody {
   pub id: i32
 }
 
-pub async fn rename_sheet_by_id(req: HttpRequest, form: web::Form<CreateSheetBody>) -> Result<HttpResponse> {
+pub async fn rename_sheet_by_id(req: HttpRequest, form: web::Form<RenameSheetByIdBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
@@ -95,7 +95,7 @@ pub async fn rename_sheet_by_id(req: HttpRequest, form: web::Form<CreateSheetBod
     );
   }
 
-  let some_sheet = Sheet::get_by_name(&form.name).map_err(|err| {
+  let some_sheet = Sheet::get_by_id(form.id).map_err(|err| {
     println!("error when fetching sheet {}", err);
 
     HttpResponse::InternalServerError()

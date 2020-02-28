@@ -92,8 +92,10 @@ a {
 input {
   border-radius: 6px;
   border: none;
-  background: rgb(244, 246, 248);
-  box-shadow: inset 0 0 2px 0px rgba(20, 20, 20, 0.2);
+  /* background: rgb(244, 246, 248); */
+  /* box-shadow: inset 0 0 2px 0px rgba(20, 20, 20, 0.2); */
+  border: solid 1px whitesmoke;
+  background: none;
   padding: .5em;
 }
 
@@ -102,6 +104,46 @@ label {
   font-weight: 700;
 }
 /* #endregion global styles */
+
+/* #region form styles */
+.form-wrapper {
+  background: linear-gradient(-45deg, rgb(251, 252, 255) 0%, rgba(255,255,255,1) 100%);
+  border-radius: 6px;
+  box-shadow: 0 0 12px 2px rgba(20, 20, 20, .1);
+  padding: 1em;
+  max-width: 350px;
+  border-left: 6px solid #3f3d56;
+}
+
+.form-wrapper:active {
+  box-shadow: 
+    0 4px 12px -2px rgba(20, 20, 20, .1),
+    12px 12px 12px -6px var(--var-main-color-low-opacity);
+  transform: scale(1.03, 1.02);
+}
+
+
+.form-wrapper form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.form-wrapper form input {
+  display: block;
+}
+
+form div.row {
+  margin-top: 2em;
+  display: flex;
+  justify-content: flex-end;
+}
+
+form div.row * + * {
+  margin-left: 1em;
+}
+/* #endregion form styles */
+
 
 /* #region main-page global style */
 #content {

@@ -1,0 +1,28 @@
+#content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-wrapper {
+  padding: 1em;
+  display: block;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px -2px rgba(20, 20, 20, .1);
+  background: linear-gradient(-45deg, rgb(251, 252, 255) 0%, rgba(255,255,255,1) 100%);
+  transition: .2s box-shadow ease-in-out;
+  transition: .2s transform ease-in-out;
+  max-width: 350px;
+}
+
+.form-wrapper:focus {
+  box-shadow: 
+    0 4px 12px -2px rgba(20, 20, 20, .1),
+    12px 12px 12px -6px var(--var-main-color-low-opacity);
+  transform: scale(1.03, 1.02);
+}
+
+label {
+  display: block;
+}

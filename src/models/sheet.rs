@@ -55,6 +55,8 @@ impl Sheet {
   pub fn update(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 
+    format!("self.name {}", self.name);
+
     conn.execute("
       update sheets
       set name = ?1
