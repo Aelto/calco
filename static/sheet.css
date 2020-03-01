@@ -1,0 +1,12 @@
+
+.expenses-and-incomes {
+  display: flex;
+}
+
+.expenses-and-incomes > * {
+  flex-grow: 1;
+}
+
+.expenses-and-incomes > * + * {
+  margin-left: 2em;
+}

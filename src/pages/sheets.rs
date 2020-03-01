@@ -26,8 +26,9 @@ pub async fn render(_req: HttpRequest) -> HttpResponse {
       Ok(sheets) => {
         section class="sheets" {
           @for sheet in &sheets {
+            
             div class="sheet" {
-              div class="name" { (sheet.name) }
+              a href={"/sheet/" (sheet.id)} class="name" { (sheet.name) }
 
               div class="bottom-row" {
                 div class="actions" {
@@ -39,8 +40,8 @@ pub async fn render(_req: HttpRequest) -> HttpResponse {
                   }
                 }
               }
-
             }
+
           }
         }
       },

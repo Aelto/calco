@@ -1,5 +1,7 @@
 #![feature(proc_macro_hygiene)]
 
+extern crate chrono;
+
 use actix_web::{App, web, HttpServer};
 use actix_files as fs;
 
@@ -26,14 +28,24 @@ async fn main() -> std::io::Result<()> {
 
   HttpServer::new(|| {
     App::new()
+    // home page
     .service(web::resource("/").route(web::get().to(pages::root::render)))
+
+    // auth pages
     .route("/signup", web::get().to(pages::signup::render))
     .route("/signin", web::get().to(pages::signin::render))
     
+    // sheets pages
     .service(web::resource("/sheets").route(web::get().to(pages::sheets::render)))
     .service(web::resource("/new-sheet").route(web::get().to(pages::new_sheet::render)))
     .service(web::resource("/sheet/rename/{sheet_id}").route(web::get().to(pages::rename_sheet::render)))
+    .service(web::resource("/sheet/{sheet_id}").route(web::get().to(pages::sheet::render)))
+    .service(web::resource("/sheet/{sheet_id}/expenses/new").route(web::get().to(pages::new_sheet_expense::render)))
+
+    // static files
     .service(fs::Files::new("/static", "./static"))
+
+    // api endpoints
     .service(
       web::scope("/api")
         .route("/auth/signup", web::post().to(api::auth::signup))
@@ -42,8 +54,10 @@ async fn main() -> std::io::Result<()> {
         .route("/sheets", web::post().to(api::sheet::create_sheet))
         .route("/sheets/delete-by-id", web::post().to(api::sheet::delete_sheet_by_id))
         .route("/sheets/rename-by-id", web::post().to(api::sheet::rename_sheet_by_id))
+        .route("/expenses", web::post().to(api::expense::create_expense))
         .route("/invitations", web::post().to(api::invitations::create_invitation))
     )
+
   })
   .bind(format!("127.0.0.1:{}", port))?
   .run()

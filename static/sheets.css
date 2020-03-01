@@ -41,7 +41,8 @@ section.sheets .sheet:hover {
   transform: scale(1.03, 1.02);
 }
 
-section.sheets .sheet .name {
+section.sheets .sheet .name:hover {
+  text-decoration: underline;
 }
 
 section.sheets .sheet + .sheet {

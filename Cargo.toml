@@ -17,6 +17,7 @@ maud = { version = "*", features = ["actix-web"] }
 rusqlite = { version = "0.21.0", features = ["bundled"] }
 serde = "1.0.104"
 futures = "0.3.1"
+chrono = { version = "0.4", features = ["serde"] }
 
 # passwords & tokens
 uuid = { version = "0.8.1", features = ["v4"] }
