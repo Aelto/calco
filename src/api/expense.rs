@@ -17,8 +17,6 @@ pub struct CreateExpenseBody {
 pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
-  println!("test");
-
   match auth_result {
     Ok(auth) => {
       if !auth.has_access() {
@@ -37,12 +35,6 @@ pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>
       )
     }
   };
-
-  println!("{}", form.date);
-
-  if let Err(e) = NaiveDate::parse_from_str(&form.date, "%Y-%m-%d") {
-    println!("{}", e);
-  }
 
   if let Ok(date) = NaiveDate::parse_from_str(&form.date, "%Y-%m-%d") {
     let expense = Expense::new(&form.name, form.amount, form.sheet_id, date.and_hms(0, 0, 0).timestamp());
