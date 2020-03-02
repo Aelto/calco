@@ -7,6 +7,7 @@ pub mod category;
 pub mod user;
 pub mod invitation;
 pub mod inherited_sheet;
+pub mod cached_sheet_value;
 
 pub fn create_database() -> Result<()> {
   println!("creating database tables");
@@ -18,6 +19,7 @@ pub fn create_database() -> Result<()> {
   .and(expense::create_table())
   .and(invitation::create_table())
   .and(inherited_sheet::create_table())
+  .and(cached_sheet_value::create_table())
   .and(create_admin_invitation())
 }
 

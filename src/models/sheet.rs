@@ -1,5 +1,6 @@
 use crate::constants::DATABASE_PATH;
 use crate::models::inherited_sheet;
+use crate::models::cached_sheet_value;
 use rusqlite::{params, Connection, Result};
 
 /// Represents a calculus sheet,
@@ -48,6 +49,7 @@ impl Sheet {
 
     inherited_sheet::remove_all_from_inherited_sheet_id(self.id)?;
     inherited_sheet::remove_all_from_parent_sheet_id(self.id)?;
+    cached_sheet_value::remove_by_sheet_id(self.id)?;
 
     Ok(())
   }
@@ -121,6 +123,29 @@ impl Sheet {
     ")?;
 
     let sheets = query.query_map(params![], |row| {
+      Ok(
+        Sheet {
+          id: row.get(0)?,
+          name: row.get(1)?
+        }
+      )
+    })?;
+
+    sheets.collect()
+  }
+
+  #[allow(dead_code)]
+  pub fn get_all_sheets_by_parent_sheet_id(sheet_id: i32) -> Result<Vec<Sheet>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select id, name
+      from sheets
+      join inherited_sheets on inherited_sheet_id = id
+      where parent_sheet_id = ?1
+    ")?;
+
+    let sheets = query.query_map(params![sheet_id], |row| {
       Ok(
         Sheet {
           id: row.get(0)?,

@@ -10,3 +10,51 @@
 .expenses-and-incomes > * + * {
   margin-left: 2em;
 }
+
+.expense {
+  display: flex;
+  flex-direction: column;
+  padding: .5em;
+}
+
+.expense .row {
+  display: flex;
+  align-items: center;
+}
+
+.expense + .expense {
+  border-top: solid 1px var(--var-main-color-reduced-opacity);
+}
+
+.expense .row .actions {
+  flex-grow: 1;;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+}
+
+.expense:hover .actions {
+  opacity: 1;
+}
+
+.expense:hover {
+  background: var(--var-main-color-reduced-opacity);
+}
+
+.expense .row .actions * + * {
+  margin-left: 1em;
+}
+
+.expense .amount {
+  min-width: 30px;
+  text-align: right;
+  font-weight: bold;
+}
+
+.expense .amount + * {
+  margin-left: 1em;
+}
+
+.expense .name {
+  opacity: .8;
+}

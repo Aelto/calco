@@ -52,6 +52,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
   let sheet = some_sheet.unwrap();
   let expenses_result = Expense::get_all_by_sheet_id(sheet.id);
   let incomes_result = Income::get_all_by_sheet_id(sheet.id);
+  let sheets_result = Sheet::get_all_sheets_by_parent_sheet_id(sheet_id);
 
   let content = html! {
     div class="title-row" {
@@ -75,11 +76,23 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
 
           @match expenses_result {
             Ok(expenses) => {
+              
               @for expense in expenses {
                 div.expense {
-                  span { (expense.amount) } " - " span { (expense.name) }
+                  div.row {
+                    span.amount { (expense.amount) }
+                    span.name { (expense.name) }
+
+                    div.actions {
+                      a href={"/expenses/"(expense.id)} { "edit" }
+                      form method="post" action={"/sheet/"(sheet_id)"/expenses/delete/"(expense.id)} {
+                        input.link type="submit" value="delete";
+                      }
+                    }
+                  }
                 }
               }
+
             },
 
             Err(e) => {
@@ -102,11 +115,32 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
 
           @match incomes_result {
             Ok(incomes) => {
-              @for income in incomes {
-                div.income {
-                  span { (income.amount) } " - " span { (income.name) }
+
+              table {
+                thead {
+                  tr {
+                    th { "€" }
+                    th { " " }
+                    th { " " }
+                  }
+                }
+
+                tbody {
+                  @for income in incomes {
+                    tr.income {
+                      td.amount { (income.amount) }
+                      td.name { (income.name) }
+                      td.actions {
+                        a href={"/incomes/"(income.id)} { "edit" }
+                        form method="post" action={"/sheet/"(sheet_id)"/incomes/delete/"(income.id)} {
+                          input type="submit" value="delete";
+                        }
+                      }
+                    }
+                  }
                 }
               }
+
             },
 
             Err(e) => {
@@ -116,6 +150,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
 
         }
       }
+
     }
   };
 

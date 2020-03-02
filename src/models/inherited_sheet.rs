@@ -72,6 +72,29 @@ impl InheritedSheet {
 
     inherited_sheets.collect()
   }
+
+  #[allow(dead_code)]
+  pub fn get_all_by_sheet_id(sheet_id: i32) -> Result<Vec<InheritedSheet>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select parent_sheet_id, inherited_sheet_id, date
+      from inherited_sheets
+      where parent_sheet_id = ?1
+    ")?;
+
+    let inherited_sheets = query.query_map(params![sheet_id], |row| {
+      Ok(
+        InheritedSheet {
+          parent_sheet_id: row.get(0)?,
+          inherited_sheet_id: row.get(1)?,
+          date: row.get(2)?
+        }
+      )
+    })?;
+
+    inherited_sheets.collect()
+  }
 }
 
 pub fn create_table() -> Result<()> {
