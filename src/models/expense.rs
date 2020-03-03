@@ -86,6 +86,31 @@ impl Expense {
   }
 
   #[allow(dead_code)]
+  pub fn get_by_id(id: i32) -> Result<Option<Expense>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select id, name, amount, date, sheet_id
+      from expenses
+      where id = ?1
+    ")?;
+
+    let mut expenses = query.query_map(params![id], |row| {
+      Ok(
+        Expense {
+          id: row.get(0)?,
+          name: row.get(1)?,
+          amount: row.get(2)?,
+          date: row.get(3)?,
+          sheet_id: row.get(4)?
+        }
+      )
+    })?;
+
+    expenses.nth(0).transpose()
+  }
+
+  #[allow(dead_code)]
   pub fn get_all() -> Result<Vec<Expense>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
@@ -132,6 +157,22 @@ impl Expense {
     })?;
 
     expenses.collect()
+  }
+
+  pub fn update(&self) -> Result<()> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    conn.execute("
+      update expenses
+      set name = ?1,
+          amount = ?2,
+          date = ?3
+      where id = ?4
+      ",
+      params![self.name, self.amount, self.date, self.id],
+    )?;
+
+    Ok(())
   }
 }
 

@@ -67,12 +67,14 @@ pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct RenameSheetByIdBody {
+pub struct UpdateExpenseByIdBody {
   pub name: String,
+  pub amount: i32,
+  pub date: String,
   pub id: i32
 }
 
-pub async fn rename_sheet_by_id(req: HttpRequest, form: web::Form<RenameSheetByIdBody>) -> Result<HttpResponse> {
+pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpenseByIdBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
@@ -94,48 +96,53 @@ pub async fn rename_sheet_by_id(req: HttpRequest, form: web::Form<RenameSheetByI
     }
   };
 
-  if form.name.len() == 0 {
-    return Ok(
-      HttpResponse::Unauthorized()
-        .content_type("text/plain")
-        .body("sheet name is required")
-    );
-  }
-
-  let some_sheet = Sheet::get_by_id(form.id).map_err(|err| {
-    println!("error when fetching sheet {}", err);
+  let some_expense = Expense::get_by_id(form.id).map_err(|err| {
+    println!("error when fetching expense {}", err);
 
     HttpResponse::InternalServerError()
       .content_type("text/plain")
-      .body("Internal server error: error when searching sheet from database")
+      .body("Internal server error: error when searching expense from database")
   })?;
 
-  if let Some(mut sheet) = some_sheet {
-    sheet.name = form.name.clone();
+  if let Some(mut expense) = some_expense {
+    expense.amount = form.amount;
+    expense.name = form.name.clone();
 
-    sheet.update().map_err(|err| {
-      println!("error when removing sheet {}", err);
+    if let Ok(date) = NaiveDate::parse_from_str(&form.date, "%Y-%m-%d") {
+      expense.date = date.and_hms(0, 0, 0).timestamp();
+    }  
+
+    expense.update().map_err(|err| {
+      println!("error when updating expense {}", err);
 
       HttpResponse::InternalServerError()
         .content_type("text/plain")
         .body("Internal server error: error when renaming sheet from database")
     })?;
+
+    return Ok(
+      HttpResponse::Found()
+        .header(http::header::LOCATION, format!("/sheet/{}", expense.sheet_id))
+        .content_type("text/plain")
+        .body("update")
+    );
   }
 
-  Ok(
+  return Ok(
     HttpResponse::Found()
-      .header(http::header::LOCATION, "/sheets")
+      .header(http::header::LOCATION, format!("/expenses/{}", form.id))
       .content_type("text/plain")
-      .body("renamed")
-  )
+      .body("update")
+  );
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct DeleteSheetByIdBody {
+pub struct DeleteExpenseByIdBody {
   pub id: i32,
+  pub sheet_id: i32
 }
 
-pub async fn delete_sheet_by_id(req: HttpRequest, form: web::Form<DeleteSheetByIdBody>) -> Result<HttpResponse> {
+pub async fn delete_sheet_by_id(req: HttpRequest, form: web::Form<DeleteExpenseByIdBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
@@ -157,27 +164,27 @@ pub async fn delete_sheet_by_id(req: HttpRequest, form: web::Form<DeleteSheetByI
     }
   };
 
-  let some_sheet = Sheet::get_by_id(form.id).map_err(|err| {
-    println!("error when fetching sheet {}", err);
+  let some_expense = Expense::get_by_id(form.id).map_err(|err| {
+    println!("error when fetching expense {}", err);
 
     HttpResponse::InternalServerError()
       .content_type("text/plain")
-      .body("Internal server error: error when searching sheet from database")
+      .body("Internal server error: error when searching expense from database")
   })?;
 
-  if let Some(sheet) = some_sheet {
-    sheet.remove().map_err(|err| {
-      println!("error when removing sheet {}", err);
+  if let Some(expense) = some_expense {
+    expense.remove().map_err(|err| {
+      println!("error when removing expense {}", err);
 
       HttpResponse::InternalServerError()
         .content_type("text/plain")
-        .body("Internal server error: error when removing sheet from database")
+        .body("Internal server error: error when removing expense from database")
     })?;
   }
 
   Ok(
     HttpResponse::Found()
-      .header(http::header::LOCATION, "/sheets")
+      .header(http::header::LOCATION, format!("/sheet/{}", form.sheet_id))
       .content_type("text/plain")
       .body("created")
   )

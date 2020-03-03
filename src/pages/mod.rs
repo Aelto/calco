@@ -6,3 +6,4 @@ pub mod signin;
 pub mod rename_sheet;
 pub mod sheet;
 pub mod new_sheet_expense;
+pub mod edit_expense;

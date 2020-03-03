@@ -3,8 +3,8 @@ use rusqlite::{params, Connection, Result};
 
 #[allow(dead_code)]
 pub struct CachedSheetValue {
-  sheet_id: i32,
-  value: i64
+  pub sheet_id: i32,
+  pub value: i64
 }
 
 impl CachedSheetValue {

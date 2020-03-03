@@ -2,6 +2,7 @@ use crate::components;
 use crate::models::sheet::Sheet;
 use crate::models::expense::Expense;
 use crate::models::income::Income;
+use crate::models::cached_sheet_value::CachedSheetValue;
 
 use maud::html;
 use actix_web::web::HttpRequest;
@@ -52,7 +53,18 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
   let sheet = some_sheet.unwrap();
   let expenses_result = Expense::get_all_by_sheet_id(sheet.id);
   let incomes_result = Income::get_all_by_sheet_id(sheet.id);
-  let sheets_result = Sheet::get_all_sheets_by_parent_sheet_id(sheet_id);
+  let sheets_result = Sheet::get_all_sheets_by_parent_sheet_id(sheet_id)
+    .and_then(|sheets| {
+      let mut out = Vec::new();
+      
+      for sheet in sheets {
+        let sheet_id = sheet.id;
+        out.push((sheet, CachedSheetValue::get_by_sheet_id(sheet_id)?))
+      }
+
+      Ok(out)
+    });
+
 
   let content = html! {
     div class="title-row" {
@@ -84,8 +96,10 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
                     span.name { (expense.name) }
 
                     div.actions {
-                      a href={"/expenses/"(expense.id)} { "edit" }
-                      form method="post" action={"/sheet/"(sheet_id)"/expenses/delete/"(expense.id)} {
+                      a href={"/expense/"(expense.id)"/edit"} { "edit" }
+                      form method="post" action="/api/expenses/delete-by-id" {
+                        input type="hidden" name="id" value=(expense.id);
+                        input type="hidden" name="sheet_id" value=(sheet_id);
                         input.link type="submit" value="delete";
                       }
                     }
@@ -115,26 +129,17 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
 
           @match incomes_result {
             Ok(incomes) => {
+              
+              @for income in incomes {
+                div.income {
+                  div.row {
+                    span.amount { (income.amount) }
+                    span.name { (income.name) }
 
-              table {
-                thead {
-                  tr {
-                    th { "€" }
-                    th { " " }
-                    th { " " }
-                  }
-                }
-
-                tbody {
-                  @for income in incomes {
-                    tr.income {
-                      td.amount { (income.amount) }
-                      td.name { (income.name) }
-                      td.actions {
-                        a href={"/incomes/"(income.id)} { "edit" }
-                        form method="post" action={"/sheet/"(sheet_id)"/incomes/delete/"(income.id)} {
-                          input type="submit" value="delete";
-                        }
+                    div.actions {
+                      a href={"/incomes/"(income.id)} { "edit" }
+                      form method="post" action={"/sheet/"(sheet_id)"/incomes/delete/"(income.id)} {
+                        input.link type="submit" value="delete";
                       }
                     }
                   }
@@ -145,6 +150,52 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
 
             Err(e) => {
               "error fetching incomes " (e)
+            }
+          }
+
+        }
+      }
+
+      div class="sheets" {
+        div class="title-row" {
+          h4 { "sheets" }
+          a href={"/sheet/" (sheet_id) "/inherited-sheets/new"} {
+            button { "new expense" }
+          }
+        }
+
+        div class="sheets-list" {
+
+          @match sheets_result {
+            Ok(sheet_and_cached_values) => {
+              
+              @for (sheet, cached_sheet_value) in sheet_and_cached_values {
+                div.expense {
+                  div.row {
+                    span.amount {
+                      @match cached_sheet_value {
+                        Some(cached_sheet_value) => {
+                          (cached_sheet_value.value)
+                        }
+                        None => { "0" }
+                      }
+                    }
+                    span.name { (sheet.name) }
+
+                    div.actions {
+                      a href={"/sheet/"(sheet.id)} { "edit" }
+                      form method="post" action={"/sheet/"(sheet_id)"/sheets/delete/"(sheet.id)} {
+                        input.link type="submit" value="delete";
+                      }
+                    }
+                  }
+                }
+              }
+
+            },
+
+            Err(e) => {
+              "error fetching sheets " (e)
             }
           }
 
