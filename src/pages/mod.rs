@@ -7,3 +7,5 @@ pub mod rename_sheet;
 pub mod sheet;
 pub mod new_sheet_expense;
 pub mod edit_expense;
+pub mod new_sheet_income;
+pub mod edit_income;

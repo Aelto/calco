@@ -61,16 +61,16 @@ impl Income {
   }
   
   #[allow(dead_code)]
-  pub fn get_by_name(key: &str) -> Result<Option<Income>> {
+  pub fn get_by_id(id: i32) -> Result<Option<Income>> {
     let conn = Connection::open(DATABASE_PATH)?;
 
     let mut query = conn.prepare("
       select id, name, amount, date, sheet_id
       from incomes
-      where name = ?1
+      where id = ?1
     ")?;
 
-    let mut incomes = query.query_map(params![key], |row| {
+    let mut incomes = query.query_map(params![id], |row| {
       Ok(
         Income {
           id: row.get(0)?,
@@ -132,6 +132,22 @@ impl Income {
     })?;
 
     incomes.collect()
+  }
+
+  pub fn update(&self) -> Result<()> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    conn.execute("
+      update incomes
+      set name = ?1,
+          amount = ?2,
+          date = ?3
+      where id = ?4
+      ",
+      params![self.name, self.amount, self.date, self.id],
+    )?;
+
+    Ok(())
   }
 }
 

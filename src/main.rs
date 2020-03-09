@@ -42,6 +42,8 @@ async fn main() -> std::io::Result<()> {
     .service(web::resource("/sheet/{sheet_id}").route(web::get().to(pages::sheet::render)))
     .service(web::resource("/sheet/{sheet_id}/expenses/new").route(web::get().to(pages::new_sheet_expense::render)))
     .service(web::resource("/expense/{expense_id}/edit").route(web::get().to(pages::edit_expense::render)))
+    .service(web::resource("/sheet/{sheet_id}/incomes/new").route(web::get().to(pages::new_sheet_income::render)))
+    .service(web::resource("/income/{income_id}/edit").route(web::get().to(pages::edit_income::render)))
 
     // static files
     .service(fs::Files::new("/static", "./static"))
@@ -56,8 +58,11 @@ async fn main() -> std::io::Result<()> {
         .route("/sheets/delete-by-id", web::post().to(api::sheet::delete_sheet_by_id))
         .route("/sheets/rename-by-id", web::post().to(api::sheet::rename_sheet_by_id))
         .route("/expenses", web::post().to(api::expense::create_expense))
-        .route("/expenses/delete-by-id", web::post().to(api::expense::delete_sheet_by_id))
+        .route("/expenses/delete-by-id", web::post().to(api::expense::delete_expense_by_id))
         .route("/expenses/update-by-id", web::post().to(api::expense::update_expense_by_id))
+        .route("/incomes", web::post().to(api::income::create_income))
+        .route("/incomes/delete-by-id", web::post().to(api::income::delete_income_by_id))
+        .route("/incomes/update-by-id", web::post().to(api::income::update_income_by_id))
         .route("/invitations", web::post().to(api::invitations::create_invitation))
     )
 

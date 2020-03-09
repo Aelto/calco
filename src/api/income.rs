@@ -1,4 +1,4 @@
-use crate::models::expense::Expense;
+use crate::models::income::Income;
 use crate::models::user::{UserRole};
 use crate::utils::req_auth::request_authentication;
 
@@ -6,14 +6,14 @@ use serde::{Deserialize, Serialize};
 use actix_web::{web, HttpRequest, HttpResponse, Result, http};
 use chrono::prelude::*;
 #[derive(Serialize, Deserialize)]
-pub struct CreateExpenseBody {
+pub struct CreateIncomeBody {
   pub name: String,
   pub amount: i32,
   pub date: String,
   pub sheet_id: i32
 }
 
-pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>) -> Result<HttpResponse> {
+pub async fn create_income(req: HttpRequest, form: web::Form<CreateIncomeBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
@@ -36,15 +36,15 @@ pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>
   };
 
   if let Ok(date) = NaiveDate::parse_from_str(&form.date, "%Y-%m-%d") {
-    let expense = Expense::new(&form.name, form.amount, form.sheet_id, date.and_hms(0, 0, 0).timestamp());
+    let income = Income::new(&form.name, form.amount, form.sheet_id, date.and_hms(0, 0, 0).timestamp());
 
-    expense.insert()
+    income.insert()
     .map_err(|err| {
-      println!("error when creating expense {}", err);
+      println!("error when creating income {}", err);
   
       HttpResponse::InternalServerError()
         .content_type("text/plain")
-        .body("Internal server error: error when inserting expense into database")
+        .body("Internal server error: error when inserting income into database")
     })?;
   
     Ok(
@@ -55,25 +55,25 @@ pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>
     )
   }
   else {
-    println!("error when parsing expense date");
+    println!("error when parsing income date");
   
     return Ok(
       HttpResponse::InternalServerError()
       .content_type("text/plain")
-      .body("Internal server error: error when parsing expense date")
+      .body("Internal server error: error when parsing income date")
     );
   }
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct UpdateExpenseByIdBody {
+pub struct UpdateincomeByIdBody {
   pub name: String,
   pub amount: i32,
   pub date: String,
   pub id: i32
 }
 
-pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpenseByIdBody>) -> Result<HttpResponse> {
+pub async fn update_income_by_id(req: HttpRequest, form: web::Form<UpdateincomeByIdBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
@@ -95,24 +95,24 @@ pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpens
     }
   };
 
-  let some_expense = Expense::get_by_id(form.id).map_err(|err| {
-    println!("error when fetching expense {}", err);
+  let some_income = Income::get_by_id(form.id).map_err(|err| {
+    println!("error when fetching income {}", err);
 
     HttpResponse::InternalServerError()
       .content_type("text/plain")
-      .body("Internal server error: error when searching expense from database")
+      .body("Internal server error: error when searching income from database")
   })?;
 
-  if let Some(mut expense) = some_expense {
-    expense.amount = form.amount;
-    expense.name = form.name.clone();
+  if let Some(mut income) = some_income {
+    income.amount = form.amount;
+    income.name = form.name.clone();
 
     if let Ok(date) = NaiveDate::parse_from_str(&form.date, "%Y-%m-%d") {
-      expense.date = date.and_hms(0, 0, 0).timestamp();
+      income.date = date.and_hms(0, 0, 0).timestamp();
     }  
 
-    expense.update().map_err(|err| {
-      println!("error when updating expense {}", err);
+    income.update().map_err(|err| {
+      println!("error when updating income {}", err);
 
       HttpResponse::InternalServerError()
         .content_type("text/plain")
@@ -121,7 +121,7 @@ pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpens
 
     return Ok(
       HttpResponse::Found()
-        .header(http::header::LOCATION, format!("/sheet/{}", expense.sheet_id))
+        .header(http::header::LOCATION, format!("/sheet/{}", income.sheet_id))
         .content_type("text/plain")
         .body("update")
     );
@@ -129,19 +129,19 @@ pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpens
 
   return Ok(
     HttpResponse::Found()
-      .header(http::header::LOCATION, format!("/expenses/{}", form.id))
+      .header(http::header::LOCATION, format!("/incomes/{}", form.id))
       .content_type("text/plain")
       .body("update")
   );
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct DeleteExpenseByIdBody {
+pub struct DeleteincomeByIdBody {
   pub id: i32,
   pub sheet_id: i32
 }
 
-pub async fn delete_expense_by_id(req: HttpRequest, form: web::Form<DeleteExpenseByIdBody>) -> Result<HttpResponse> {
+pub async fn delete_income_by_id(req: HttpRequest, form: web::Form<DeleteincomeByIdBody>) -> Result<HttpResponse> {
   let auth_result = request_authentication(&req, UserRole::Guest);
 
   match auth_result {
@@ -163,21 +163,21 @@ pub async fn delete_expense_by_id(req: HttpRequest, form: web::Form<DeleteExpens
     }
   };
 
-  let some_expense = Expense::get_by_id(form.id).map_err(|err| {
-    println!("error when fetching expense {}", err);
+  let some_income = Income::get_by_id(form.id).map_err(|err| {
+    println!("error when fetching income {}", err);
 
     HttpResponse::InternalServerError()
       .content_type("text/plain")
-      .body("Internal server error: error when searching expense from database")
+      .body("Internal server error: error when searching income from database")
   })?;
 
-  if let Some(expense) = some_expense {
-    expense.remove().map_err(|err| {
-      println!("error when removing expense {}", err);
+  if let Some(income) = some_income {
+    income.remove().map_err(|err| {
+      println!("error when removing income {}", err);
 
       HttpResponse::InternalServerError()
         .content_type("text/plain")
-        .body("Internal server error: error when removing expense from database")
+        .body("Internal server error: error when removing income from database")
     })?;
   }
 

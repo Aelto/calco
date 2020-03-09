@@ -11,50 +11,50 @@
   margin-left: 2em;
 }
 
-.expense {
+.expense, .income {
   display: flex;
   flex-direction: column;
   padding: .5em;
 }
 
-.expense .row {
+.expense .row, .income .row {
   display: flex;
   align-items: center;
 }
 
-.expense + .expense {
+.expense + .expense, .income + .income {
   border-top: solid 1px var(--var-main-color-reduced-opacity);
 }
 
-.expense .row .actions {
+.expense .row .actions, .income .row .actions {
   flex-grow: 1;;
   display: flex;
   justify-content: flex-end;
   opacity: 0;
 }
 
-.expense:hover .actions {
+.expense:hover .actions, .income:hover .actions {
   opacity: 1;
 }
 
-.expense:hover {
+.expense:hover, .income:hover {
   background: var(--var-main-color-reduced-opacity);
 }
 
-.expense .row .actions * + * {
+.expense .row .actions * + *, .income .row .actions * + * {
   margin-left: 1em;
 }
 
-.expense .amount {
+.expense .amount, .income .amount {
   min-width: 30px;
   text-align: right;
   font-weight: bold;
 }
 
-.expense .amount + * {
+.expense .amount + *, .income .amount + * {
   margin-left: 1em;
 }
 
-.expense .name {
+.expense .name, .income .name {
   opacity: .8;
 }

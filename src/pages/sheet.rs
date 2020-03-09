@@ -137,8 +137,10 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
                     span.name { (income.name) }
 
                     div.actions {
-                      a href={"/incomes/"(income.id)} { "edit" }
-                      form method="post" action={"/sheet/"(sheet_id)"/incomes/delete/"(income.id)} {
+                      a href={"/income/"(income.id)"/edit"} { "edit" }
+                      form method="post" action="/api/incomes/delete-by-id" {
+                        input type="hidden" name="id" value=(income.id);
+                        input type="hidden" name="sheet_id" value=(sheet_id);
                         input.link type="submit" value="delete";
                       }
                     }
@@ -160,7 +162,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
         div class="title-row" {
           h4 { "sheets" }
           a href={"/sheet/" (sheet_id) "/inherited-sheets/new"} {
-            button { "new expense" }
+            button { "import sheet" }
           }
         }
 

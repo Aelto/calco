@@ -22,7 +22,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
     }
 
     div class="form-wrapper" {
-      form method="post" action="/api/sheets" {
+      form method="post" action="/api/incomes" {
         h4 { "Creating a new income" }
         fieldset {
           legend { "fill the information" }
