@@ -34,6 +34,21 @@ impl CachedSheetValue {
   }
 
   #[allow(dead_code)]
+  pub fn update(&self) -> Result<()> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    conn.execute("
+      update cached_sheet_values
+      set value = ?1
+      where sheet_id = ?2
+      ",
+      params![self.value, self.sheet_id],
+    )?;
+
+    Ok(())
+  }
+
+  #[allow(dead_code)]
   pub fn remove(&self) -> Result<()> {
     let conn = Connection::open(DATABASE_PATH)?;
 

@@ -4,3 +4,4 @@ pub mod invitations;
 pub mod users;
 pub mod expense;
 pub mod income;
+pub mod inherited_sheet;

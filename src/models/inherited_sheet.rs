@@ -3,9 +3,9 @@ use rusqlite::{params, Connection, Result};
 
 #[allow(dead_code)]
 pub struct InheritedSheet {
-  parent_sheet_id: i32,
-  inherited_sheet_id: i32,
-  date: i64
+  pub parent_sheet_id: i32,
+  pub inherited_sheet_id: i32,
+  pub date: i64
 }
 
 impl InheritedSheet {
@@ -49,6 +49,28 @@ impl InheritedSheet {
     )?;
 
     Ok(())
+  }
+
+  pub fn get_by_parent_and_inherited_id(parent_id: i32, inherited_id: i32) -> Result<Option<InheritedSheet>> {
+    let conn = Connection::open(DATABASE_PATH)?;
+
+    let mut query = conn.prepare("
+      select parent_sheet_id, inherited_sheet_id, date
+      from inherited_sheets
+      where parent_sheet_id = ?1 and inherited_sheet_id = ?2
+    ")?;
+
+    let mut configs = query.query_map(params![parent_id, inherited_id], |row| {
+      Ok(
+        InheritedSheet {
+          parent_sheet_id: row.get(0)?,
+          inherited_sheet_id: row.get(1)?,
+          date: row.get(2)?
+        }
+      )
+    })?;
+
+    configs.nth(0).transpose()
   }
 
   #[allow(dead_code)]

@@ -44,6 +44,7 @@ async fn main() -> std::io::Result<()> {
     .service(web::resource("/expense/{expense_id}/edit").route(web::get().to(pages::edit_expense::render)))
     .service(web::resource("/sheet/{sheet_id}/incomes/new").route(web::get().to(pages::new_sheet_income::render)))
     .service(web::resource("/income/{income_id}/edit").route(web::get().to(pages::edit_income::render)))
+    .service(web::resource("/sheet/{sheet_id}/inherited-sheets/new").route(web::get().to(pages::new_sheet_inherited_sheet::render)))
 
     // static files
     .service(fs::Files::new("/static", "./static"))
@@ -63,6 +64,8 @@ async fn main() -> std::io::Result<()> {
         .route("/incomes", web::post().to(api::income::create_income))
         .route("/incomes/delete-by-id", web::post().to(api::income::delete_income_by_id))
         .route("/incomes/update-by-id", web::post().to(api::income::update_income_by_id))
+        .route("/inherited-sheets", web::post().to(api::inherited_sheet::create_inherited_sheet))
+        .route("/inherited-sheets/delete", web::post().to(api::inherited_sheet::delete_inherited_sheet_by_id))
         .route("/invitations", web::post().to(api::invitations::create_invitation))
     )
 

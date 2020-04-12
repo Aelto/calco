@@ -1,5 +1,6 @@
 use crate::models::expense::Expense;
 use crate::models::user::{UserRole};
+use crate::models::sheet::Sheet;
 use crate::utils::req_auth::request_authentication;
 
 use serde::{Deserialize, Serialize};
@@ -46,6 +47,29 @@ pub async fn create_expense(req: HttpRequest, form: web::Form<CreateExpenseBody>
         .content_type("text/plain")
         .body("Internal server error: error when inserting expense into database")
     })?;
+
+    let some_sheet = Sheet::get_by_id(expense.sheet_id)
+    .map_err(|err| {
+      println!("error when fetching parent sheet {}", err);
+
+      HttpResponse::InternalServerError()
+        .content_type("text/plain")
+        .body("Internal server error: error when fetching parent sheet from database")
+    })?;
+    
+    if let Some(mut sheet) = some_sheet {
+      sheet.remove_from_cached_value(expense.amount)
+      .map_err(|err| {
+        println!("error when updating parent sheet cached value {}", err);
+
+        HttpResponse::InternalServerError()
+          .content_type("text/plain")
+          .body("Internal server error: error when updating parent sheet in database")
+      })?;
+    }
+    else {
+      println!("no such sheet");
+    }
   
     Ok(
       HttpResponse::Found()
@@ -104,6 +128,8 @@ pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpens
   })?;
 
   if let Some(mut expense) = some_expense {
+    let before_update_amount = expense.amount;
+
     expense.amount = form.amount;
     expense.name = form.name.clone();
 
@@ -118,6 +144,31 @@ pub async fn update_expense_by_id(req: HttpRequest, form: web::Form<UpdateExpens
         .content_type("text/plain")
         .body("Internal server error: error when renaming sheet from database")
     })?;
+
+    let some_sheet = Sheet::get_by_id(expense.sheet_id)
+    .map_err(|err| {
+      println!("error when fetching parent sheet {}", err);
+
+      HttpResponse::InternalServerError()
+        .content_type("text/plain")
+        .body("Internal server error: error when fetching parent sheet from database")
+    })?;
+    
+    if let Some(mut sheet) = some_sheet {
+      let difference_with_update = expense.amount - before_update_amount;
+
+      sheet.remove_from_cached_value(difference_with_update)
+      .map_err(|err| {
+        println!("error when updating parent sheet cached value {}", err);
+
+        HttpResponse::InternalServerError()
+          .content_type("text/plain")
+          .body("Internal server error: error when updating parent sheet in database")
+      })?;
+    }
+    else {
+      println!("no such sheet");
+    }
 
     return Ok(
       HttpResponse::Found()
@@ -179,6 +230,26 @@ pub async fn delete_expense_by_id(req: HttpRequest, form: web::Form<DeleteExpens
         .content_type("text/plain")
         .body("Internal server error: error when removing expense from database")
     })?;
+
+    let some_sheet = Sheet::get_by_id(expense.sheet_id)
+    .map_err(|err| {
+      println!("error when fetching parent sheet {}", err);
+
+      HttpResponse::InternalServerError()
+        .content_type("text/plain")
+        .body("Internal server error: error when fetching parent sheet from database")
+    })?;
+    
+    if let Some(mut sheet) = some_sheet {
+      sheet.add_to_cached_value(expense.amount)
+      .map_err(|err| {
+        println!("error when updating parent sheet cached value {}", err);
+
+        HttpResponse::InternalServerError()
+          .content_type("text/plain")
+          .body("Internal server error: error when updating parent sheet in database")
+      })?;
+    }
   }
 
   Ok(

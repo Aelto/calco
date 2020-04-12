@@ -2,7 +2,6 @@ use crate::components;
 use crate::models::sheet::Sheet;
 use crate::models::expense::Expense;
 use crate::models::income::Income;
-use crate::models::cached_sheet_value::CachedSheetValue;
 
 use maud::html;
 use actix_web::web::HttpRequest;
@@ -53,23 +52,13 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
   let sheet = some_sheet.unwrap();
   let expenses_result = Expense::get_all_by_sheet_id(sheet.id);
   let incomes_result = Income::get_all_by_sheet_id(sheet.id);
-  let sheets_result = Sheet::get_all_sheets_by_parent_sheet_id(sheet_id)
-    .and_then(|sheets| {
-      let mut out = Vec::new();
-      
-      for sheet in sheets {
-        let sheet_id = sheet.id;
-        out.push((sheet, CachedSheetValue::get_by_sheet_id(sheet_id)?))
-      }
-
-      Ok(out)
-    });
+  let sheets_result = Sheet::get_all_sheets_by_parent_sheet_id(sheet_id);
 
 
   let content = html! {
     div class="title-row" {
       div class="left" {
-        h1 { (sheet.name) }
+        h1 { (sheet.name) ", " span { (sheet.cached_value) } }
         span { "expenses and incomes" }
       }
     }
@@ -169,24 +158,20 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
         div class="sheets-list" {
 
           @match sheets_result {
-            Ok(sheet_and_cached_values) => {
+            Ok(sheets) => {
               
-              @for (sheet, cached_sheet_value) in sheet_and_cached_values {
+              @for sheet in sheets {
                 div.expense {
                   div.row {
-                    span.amount {
-                      @match cached_sheet_value {
-                        Some(cached_sheet_value) => {
-                          (cached_sheet_value.value)
-                        }
-                        None => { "0" }
-                      }
-                    }
+                    span.amount { (sheet.cached_value) }
                     span.name { (sheet.name) }
 
                     div.actions {
                       a href={"/sheet/"(sheet.id)} { "edit" }
-                      form method="post" action={"/sheet/"(sheet_id)"/sheets/delete/"(sheet.id)} {
+                      form method="post" action={"/api/inherited-sheets/delete"} {
+                        input type="hidden" name="sheet_id" value=(sheet_id);
+                        input type="hidden" name="inherited_sheet_id" value=(sheet.id);
+
                         input.link type="submit" value="delete";
                       }
                     }
