@@ -68,8 +68,8 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
       div class="expenses" {
         div class="title-row" {
           h4 { "expenses" }
-          a href={"/sheet/" (sheet_id) "/expenses/new"} {
-            button { "new expense" }
+          a href={"/sheet/" (sheet_id) "/expenses/new"} class="button" {
+            "new expense" span{"+"}
           }
         }
 
@@ -109,8 +109,8 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
       div class="incomes" {
         div class="title-row" {
           h4 { "incomes" }
-          a href={"/sheet/" (sheet_id) "/incomes/new"} {
-            button { "new income" }
+          a href={"/sheet/" (sheet_id) "/incomes/new"} class="button" {
+            "new income" span{"+"}
           }
         }
 
@@ -150,8 +150,8 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
       div class="sheets" {
         div class="title-row" {
           h4 { "sheets" }
-          a href={"/sheet/" (sheet_id) "/inherited-sheets/new"} {
-            button { "import sheet" }
+          a href={"/sheet/" (sheet_id) "/inherited-sheets/new"} class="button" {
+            "import sheet" span{"+"}
           }
         }
 

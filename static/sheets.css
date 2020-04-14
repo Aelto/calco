@@ -1,10 +1,4 @@
 
-.title-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
 .title-row h1 {
   margin: 0;
 }
@@ -20,58 +14,31 @@
 }
 
 /* #region sheets list */
-section.sheets {
-  padding: 0 12em;
+.sheets {
+  max-width: 250px;
+  padding-left: 0;
 }
 
-section.sheets .sheet {
-  padding: 1em;
-  display: block;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px -2px rgba(20, 20, 20, .1);
-  background: linear-gradient(-45deg, rgb(251, 252, 255) 0%, rgba(255,255,255,1) 100%);
-  transition: .2s box-shadow ease-in-out;
-  transition: .2s transform ease-in-out;
-}
-
-section.sheets .sheet:hover {
-  box-shadow: 
-    0 4px 12px -2px rgba(20, 20, 20, .1),
-    12px 12px 12px -6px var(--var-main-color-low-opacity);
-  transform: scale(1.03, 1.02);
-}
-
-section.sheets .sheet .name:hover {
-  text-decoration: underline;
-}
-
-section.sheets .sheet + .sheet {
-  margin-top: 1em;
-}
-
-section.sheets .sheet .bottom-row {
+.sheets .sheet {
   display: flex;
-  justify-content: flex-end;
-  font-weight: lighter;
-  font-size: 85%;
+  justify-content: space-between;
+  padding: .4em;
 }
 
-section.sheets .sheet .bottom-row .actions {
-  display: flex;
-  opacity: 0;
-  transition: .1s all ease-in;
-  transition-delay: .1s;
-  transform: translate(15%, 0);
+.sheet span {
+  font-weight: bold;
+  margin-left: 3px;
 }
 
-section.sheets .sheet:hover .bottom-row .actions {
-  visibility: visible;
-  opacity: 1;
-  transform: translate(0%, 0);
+.sheets .sheet + .sheet {
+  margin-top: .4m;
 }
 
-section.sheets .sheet .bottom-row .actions input {
-  margin-left: 1em;
+.sheet:hover {
+  background: var(--var-main-color-low-opacity);
+}
+
+.sheet a {
 }
 
 /* #endregion sheets list */
