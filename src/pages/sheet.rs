@@ -3,11 +3,36 @@ use crate::models::sheet::Sheet;
 use crate::models::expense::Expense;
 use crate::models::income::Income;
 
+use crate::utils::req_auth::request_authentication;
+use crate::models::user::UserRole;
+
 use maud::html;
 use actix_web::web::HttpRequest;
-use actix_web::HttpResponse;
+use actix_web::{HttpResponse, http};
 
 pub async fn render(req: HttpRequest) -> HttpResponse {
+  let auth_result = request_authentication(&req, UserRole::Guest);
+
+  match auth_result {
+    Ok(auth) => {
+      if !auth.has_access() {
+        return HttpResponse::Found()
+        .header(http::header::LOCATION, "/signin")
+        .content_type("text/plain")
+        .body("account needed");
+      }
+    },
+    Err(e) => {
+      let view = html! {
+        "an error occured when checking account informations" (e)
+      };
+
+      return HttpResponse::InternalServerError()
+        .content_type("text/plain")
+        .body(view.into_string());
+    }
+  }
+
   let sheet_id = req
     .match_info()
     .get("sheet_id")
@@ -57,15 +82,23 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
 
   let content = html! {
     div class="title-row" {
-      div class="left" {
-        h1 { (sheet.name) ", " span { (sheet.cached_value) } }
-        span { "expenses and incomes" }
+      div {
+        h1 { (sheet.name) }
+        a href={"/sheet/rename/" (sheet_id)} { "rename" }
+      
+        form method="post" action="/api/sheets/delete-by-id" {
+          input type="hidden" name="id" value=(sheet_id);
+          input type="submit" value="delete" class="link";
+        }
+      }
+      div {
+        "expenses and incomes, currently at " (sheet.cached_value) span {"EUR"}
       }
     }
 
     section class="expenses-and-incomes" {
 
-      div class="expenses" {
+      div class="expenses column" {
         div class="title-row" {
           h4 { "expenses" }
           a href={"/sheet/" (sheet_id) "/expenses/new"} class="button" {
@@ -79,7 +112,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
             Ok(expenses) => {
               
               @for expense in expenses {
-                div.expense {
+                div.expense.element {
                   div.row {
                     span.amount { (expense.amount) }
                     span.name { (expense.name) }
@@ -106,7 +139,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
         }
       }
 
-      div class="incomes" {
+      div class="incomes column" {
         div class="title-row" {
           h4 { "incomes" }
           a href={"/sheet/" (sheet_id) "/incomes/new"} class="button" {
@@ -120,7 +153,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
             Ok(incomes) => {
               
               @for income in incomes {
-                div.income {
+                div.income.element {
                   div.row {
                     span.amount { (income.amount) }
                     span.name { (income.name) }
@@ -147,7 +180,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
         }
       }
 
-      div class="sheets" {
+      div class="sheets column" {
         div class="title-row" {
           h4 { "sheets" }
           a href={"/sheet/" (sheet_id) "/inherited-sheets/new"} class="button" {
@@ -161,7 +194,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
             Ok(sheets) => {
               
               @for sheet in sheets {
-                div.expense {
+                div.sheet.element {
                   div.row {
                     span.amount { (sheet.cached_value) }
                     span.name { (sheet.name) }

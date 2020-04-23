@@ -53,7 +53,7 @@ pub async fn render(req: HttpRequest) -> HttpResponse {
     }
   };
 
-  let view = components::page("new-sheet", &content);
+  let view = components::page("new-income", &content);
   
   HttpResponse::Ok()
   .content_type("text/html")

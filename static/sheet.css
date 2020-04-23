@@ -1,60 +1,110 @@
 
+#content > .title-row {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+}
+
+.title-row > div {
+  display: flex;
+  align-items: baseline;
+}
+
+.title-row > div:first-child > *:not(h1) {
+  margin-left: 6px;
+  font-size: 90%;
+}
+
+.title-row > div > span {
+  font-weight: bold;
+}
+
 .expenses-and-incomes {
   display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .expenses-and-incomes > * {
-  flex-grow: 1;
+  /* flex-grow: 1; */
+  /* background: white;
+  border-radius: 12px;
+  padding: 1em;
+  box-shadow: 0 0 24px whitesmoke; */
 }
 
 .expenses-and-incomes > * + * {
-  margin-left: 2em;
+  /* margin-left: 2em; */
 }
 
-.expense, .income {
+.column {
+  margin-top: 1em;
+}
+
+.column .title-row {
+  position: relative;
+}
+
+.column .title-row h4 {
+  margin: 0;
+}
+
+.column .title-row:after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 20%;
+  width: 60%;
+  height: 1px;
+  background: var(--var-main-color-reduced-opacity);
+  /* box-shadow: 0 1px 16px var(--var-main-color); */
+}
+
+.column .element {
   display: flex;
   flex-direction: column;
   padding: .5em;
 }
 
-.expense .row, .income .row {
+.column .element .row {
   display: flex;
   align-items: center;
 }
 
-.expense + .expense, .income + .income {
+.element + .element {
   border-top: solid 1px var(--var-main-color-reduced-opacity);
 }
 
-.expense .row .actions, .income .row .actions {
+.expenses-and-incomes .row .actions {
   flex-grow: 1;;
   display: flex;
   justify-content: flex-end;
   opacity: 0;
+  margin-left: 2em;
 }
 
-.expense:hover .actions, .income:hover .actions {
+.expenses-and-incomes .row:hover .actions {
   opacity: 1;
 }
 
-.expense:hover, .income:hover {
+.element:hover {
   background: var(--var-main-color-reduced-opacity);
 }
 
-.expense .row .actions * + *, .income .row .actions * + * {
+.expenses-and-incomes .row .actions > * + * {
   margin-left: 1em;
 }
 
-.expense .amount, .income .amount {
+.element .amount {
   min-width: 30px;
   text-align: right;
   font-weight: bold;
 }
 
-.expense .amount + *, .income .amount + * {
+.element .amount + * {
   margin-left: 1em;
 }
 
-.expense .name, .income .name {
+.element .name {
   opacity: .8;
 }

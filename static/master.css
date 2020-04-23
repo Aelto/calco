@@ -26,7 +26,7 @@ html, body {
   margin: 0;
   font-family: BalooPaaji;
   color: var(--var-color-black);
-  background: radial-gradient(circle, rgba(243,243,243,1) 0%, rgba(255,255,255,1) 100%);
+  /* background: radial-gradient(circle, rgba(243,243,243,1) 0%, rgba(255,255,255,1) 100%); */
   
 }
 
@@ -83,7 +83,7 @@ input.link {
   box-shadow: none;
   cursor: pointer;
   /* text-decoration: underline; */
-  color: var(--var-accent-2);
+  color: var(--var-main-color);
   font-size: 1em;
   line-height: normal;
   padding: unset;
@@ -202,10 +202,21 @@ form div.row * + * {
 .title-row h1 {
   margin: 0;
   font-size: 2rem;
+  line-height: 1;
 }
 
 .title-row span {
   margin: 0;
   opacity: .8;
 }
+
+.title-row + * {
+  margin-top: 1em;
+}
 /* #endregion main-page global style */
+
+@media only screen and (max-width: 950px) {
+  #content {
+    padding: 2em;
+  }
+}
