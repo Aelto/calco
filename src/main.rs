@@ -1,5 +1,9 @@
 #![feature(proc_macro_hygiene)]
 
+// uncomment the line below when building a release.
+// It allows the binary to start in background without a cli window.
+// #![windows_subsystem = "windows"]
+
 extern crate chrono;
 
 use actix_web::{App, web, HttpServer};
